@@ -238,7 +238,7 @@ end
 Screen('CloseAll');
 
 
-%% Traitement et affichage des données
+%% Process and display results
 [~, idx] = sort(nCoherence);
 correct = correct(idx);
 avgCoh = [((sum(correct(1:nRep))/nRep)*100), ((sum(correct(nRep+1:2*nRep))/nRep)*100), ((sum(correct(2*nRep+1:end))/nRep)*100)];
