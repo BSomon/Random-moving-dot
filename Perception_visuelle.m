@@ -238,15 +238,17 @@ end
 Screen('CloseAll');
 
 
-%% Traitement et affichage des données
+%% Traitement et affichage des donnÃ©es
 [~, idx] = sort(nCoherence);
 correct = correct(idx);
 avgCoh = [((sum(correct(1:nRep))/nRep)*100), ((sum(correct(nRep+1:2*nRep))/nRep)*100), ((sum(correct(2*nRep+1:end))/nRep)*100)];
+figure(1)
 acc = stem( unique(nCoherence(idx)), avgCoh);
 xlim([0 0.6]); xticks(unique(nCoherence(idx))); xlabel('Coherence Level'); ylabel('Accuracy (%)');
 mAcc = mean(avgCoh);
 
 RT = RT(idx);
 avgRT = mean(reshape(RT, [nRep, 3]),1)*100;
+figure(2)
 rt = boxplot(reshape(RT, [nRep, 3])*100);
 xlabel('Coherence Level'); ylabel('RT (ms)');
