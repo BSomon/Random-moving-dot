@@ -262,9 +262,10 @@ xlim([0 1]); xticks(unique(nCoherence(idx))); xlabel('Coherence Level'); ylabel(
 mAcc = mean(avgCoh);
 subplot(1,2,2)
 RT = RT(idx);
+all_RT = reshape(RT, [nRep, 3]).*1000;
 avgRT = mean(reshape(RT, [nRep, 3]),1)*1000;
 rt = boxplot(reshape(RT, [nRep, 3])*1000);
 xlabel('Coherence Level'); ylabel('RT (ms)');
 
-save('Accuracy_RT.mat', 'avgCoh', 'avgRT')
+save('Accuracy_RT.mat', 'avgCoh', 'avgRT', 'all_RT')
 savefig(figure(1), 'Accuracy_RT.fig')
