@@ -27,7 +27,7 @@ nDots = sum([Dots.nDots]);
 colors = zeros(3,nDots);
 sizes = zeros(1,nDots);
 
-nRep = 18;
+nRep = 6;
 
 DotsDuration = 1; %seconds
 ResponseDuration = 2;
@@ -43,14 +43,27 @@ correct = [];
 %Instructions 1
 drawText(Display,[0,6],'Moving dots will apear on your screen for 1 second'...
 	,[255,255,255]);
-drawText(Display,[0,5],'You have to detect as accurately as possible whether they are going up or down',...
+drawText(Display,[0,5],'Some of them are coherently going either up or down',...
+	[255,255,255]);
+drawText(Display,[0,4],'Whereas the rest is randomly moving',...
 	[255,255,255]);
 Screen(Display.windowPtr,'Flip');
 KbPressWait;
 
-drawText(Display,[0,6],'You have two seconds to respond'...
+drawText(Display,[0,6],'You have two seconds to state the direction of the coherent ones'...
 	,[255,255,255]);
-drawText(Display,[0,5],'You will have to perform 18 trials',...
+drawText(Display,[0,5],['You will have to perform ', length(nCoherence),' trials'] ,...
+	[255,255,255]);
+drawText(Display,[0,4],'At the end of every trial a feedback will be provided to you',...
+	[255,255,255]);
+Screen(Display.windowPtr,'Flip');
+KbPressWait;
+
+drawText(Display,[0,6],'Green: Correct response'...
+	,[255,255,255]);
+drawText(Display,[0,5],'Red: Error',...
+	[255,255,255]);
+drawText(Display,[0,4],'Yellow: no response',...
 	[255,255,255]);
 Screen(Display.windowPtr,'Flip');
 KbPressWait;
@@ -62,9 +75,9 @@ for iTrial = 1:length(nCoherence)
 	trialDirection = ceil(rand(1)+.5);  %50/50 chance of a 1 (up) or a 2 (down)
 	nDirection = [nDirection, trialDirection];
 	Dots.direction = (trialDirection-1)*180; %1 -> 0 degrees, 2 -> 180 degrees
-	drawText(Display,[0,6],'Press "u" if Dots are moving upward and "d" if Dots are moving downward'...
+	drawText(Display,[0,6],'Press "U" if dots are moving Upward and "D" if dots are moving Downward'...
 		,[255,255,255]);
-	drawText(Display,[0,5],'Press Any Key to Begin.',[255,255,255]);
+	drawText(Display,[0,5],'Press any key to begin.',[255,255,255]);
 	Display = drawFixation(Display);
 	KbPressWait;
 	keyIsDown = [];
@@ -238,17 +251,19 @@ end
 Screen('CloseAll');
 
 
-%% Process and display results
+%% Processing and display of the results
 [~, idx] = sort(nCoherence);
 correct = correct(idx);
 avgCoh = [((sum(correct(1:nRep))/nRep)*100), ((sum(correct(nRep+1:2*nRep))/nRep)*100), ((sum(correct(2*nRep+1:end))/nRep)*100)];
 figure(1)
+subplot(1,2,1)
 acc = stem( unique(nCoherence(idx)), avgCoh);
-xlim([0 0.6]); xticks(unique(nCoherence(idx))); xlabel('Coherence Level'); ylabel('Accuracy (%)');
+xlim([0 1]); xticks(unique(nCoherence(idx))); xlabel('Coherence Level'); ylabel('Accuracy (%)');
 mAcc = mean(avgCoh);
-
+subplot(1,2,2)
 RT = RT(idx);
 avgRT = mean(reshape(RT, [nRep, 3]),1)*100;
-figure(2)
 rt = boxplot(reshape(RT, [nRep, 3])*100);
 xlabel('Coherence Level'); ylabel('RT (ms)');
+
+savefig(figure(1), 'Accuracy_RT.fig')
