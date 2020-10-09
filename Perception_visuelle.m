@@ -215,7 +215,7 @@ for iTrial = 1:length(nCoherence)
 		%Interpret the response provide feedback
 		if length(keys)~=iTrial  %No key was pressed, yellow fixation
 			correct = [correct, NaN];
-			RT = [RT,NaN];
+			RT = [RT;NaN];
 			Display.fixation.color{1} = [255,255,0];
 			nKeys = nKeys+1;
 			keys = {keys{:}, ''};
