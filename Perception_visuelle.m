@@ -215,6 +215,7 @@ for iTrial = 1:length(nCoherence)
 		%Interpret the response provide feedback
 		if length(keys)~=iTrial  %No key was pressed, yellow fixation
 			correct = [correct, NaN];
+			RT = [RT,NaN];
 			Display.fixation.color{1} = [255,255,0];
 			nKeys = nKeys+1;
 			keys = {keys{:}, ''};
@@ -254,7 +255,7 @@ Screen('CloseAll');
 %% Processing and display of the results
 [~, idx] = sort(nCoherence);
 correct = correct(idx);
-avgCoh = [((sum(correct(1:nRep))/nRep)*100), ((sum(correct(nRep+1:2*nRep))/nRep)*100), ((sum(correct(2*nRep+1:end))/nRep)*100)];
+avgCoh = [((nansum(correct(1:nRep))/nRep)*100), ((nansum(correct(nRep+1:2*nRep))/nRep)*100), ((nansum(correct(2*nRep+1:end))/nRep)*100)];
 figure(1)
 subplot(1,2,1)
 acc = stem( unique(nCoherence(idx)), avgCoh);
@@ -263,7 +264,7 @@ mAcc = mean(avgCoh);
 subplot(1,2,2)
 RT = RT(idx);
 all_RT = reshape(RT, [nRep, 3]).*1000;
-avgRT = mean(reshape(RT, [nRep, 3]),1)*1000;
+avgRT = nanmean(reshape(RT, [nRep, 3]),1)*1000;
 rt = boxplot(reshape(RT, [nRep, 3])*1000);
 xlabel('Coherence Level'); ylabel('RT (ms)');
 
