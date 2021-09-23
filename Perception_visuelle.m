@@ -28,7 +28,7 @@ colors = zeros(3,nDots);
 sizes = zeros(1,nDots);
 
 nRep = 6;
-
+keyrecording = 1;
 DotsDuration = 1; %seconds
 ResponseDuration = 2;
 nCoherence = Shuffle(repmat([.1 .5 .9],1,nRep));
@@ -52,7 +52,7 @@ KbPressWait;
 
 drawText(Display,[0,6],'You have two seconds to state the direction of the coherent ones'...
 	,[255,255,255]);
-drawText(Display,[0,5],['You will have to perform ', length(nCoherence),' trials'] ,...
+drawText(Display,[0,5],['You will have to perform ',num2str(length(nCoherence)),' trials'] ,...
 	[255,255,255]);
 drawText(Display,[0,4],'At the end of every trial a feedback will be provided to you',...
 	[255,255,255]);
@@ -64,6 +64,13 @@ drawText(Display,[0,6],'Green: Correct response'...
 drawText(Display,[0,5],'Red: Error',...
 	[255,255,255]);
 drawText(Display,[0,4],'Yellow: no response',...
+	[255,255,255]);
+Screen(Display.windowPtr,'Flip');
+KbPressWait;
+
+drawText(Display,[0,6],'Don t correct your answers'...
+	,[255,255,255]);
+drawText(Display,[0,5],'You can only press one key per trial',...
 	[255,255,255]);
 Screen(Display.windowPtr,'Flip');
 KbPressWait;
@@ -196,26 +203,31 @@ for iTrial = 1:length(nCoherence)
 			end
 			%clear the screen and leave the fixation point
 			drawFixation(Display);
-			if ~isempty(lastKey) %a key is down: record the key and time pressed
+            if keyrecording
+            if ~isempty(lastKey) %a key is down: record the key and time pressed
 				nKeys = nKeys+1;
 				RT = cat(1, RT, timeSecs-DisplayStart);
 				keys = {keys{:}, KbName(lastKey)};
 				%clear the keyboard buffer
 				while KbCheck; end
+                keyrecording = 0;
 				lastKey = [];
 			else %If no response yet: wait for response until DotsDuration + ResponseDuration
 				[ keyIsDown, timeSecs, keyCode ] = KbCheck;
 				if keyIsDown
 					lastKey = keyCode;
-				end
-			end
-		end
+                end
+                keyrecording = 1;
+            end
+            end
+        end
+        keyrecording = 1;
 		
 		
 		%Interpret the response provide feedback
 		if length(keys)~=iTrial  %No key was pressed, yellow fixation
 			correct = [correct, NaN];
-			RT = [RT;NaN];
+			RT = [RT; NaN];
 			Display.fixation.color{1} = [255,255,0];
 			nKeys = nKeys+1;
 			keys = {keys{:}, ''};
@@ -270,3 +282,4 @@ xlabel('Coherence Level'); ylabel('RT (ms)');
 
 save('Accuracy_RT.mat', 'avgCoh', 'avgRT', 'all_RT')
 savefig(figure(1), 'Accuracy_RT.fig')
+
